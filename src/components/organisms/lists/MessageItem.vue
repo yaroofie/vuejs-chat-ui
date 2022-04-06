@@ -3,7 +3,7 @@
     <!-- Date -->
     <div v-if="message.withDate" class="w-full text-center mb-4">
       <span class="p-2 text-sm rounded bg-slate-800 text-slate-200">
-        {{ message.time }}
+        {{ message.date }}
       </span>
     </div>
     <!-- informational section -->
@@ -11,7 +11,7 @@
       {{ message.message }}
     </p>
     <!-- normal message -->
-    <div v-else class="mb-4 p-2 rounded shadow-lg" :class="messageClass">
+    <div v-else class="mb-4 p-2 rounded shadow-lg bg-gray-300" :class="message._isMe ? 'bg-lime-200' : ''">
       <!-- sender -->
       <div class="flex">
         <div class="w-1" :class="usernameClass(message)" />
@@ -34,6 +34,12 @@
       </div>
       <!-- message -->
       {{ message.message }}
+      <!-- time and status -->
+      <div class="px-2 flex justify-end">
+        <span class="text-xs">
+          {{ message.time }}
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -43,16 +49,6 @@ export default {
   props: {
     message: {
       type: Object,
-    },
-  },
-  computed: {
-    messageClass() {
-      let res = "";
-      if (this.message.color) {
-        // res += "bg-" + this.message.color;
-        res += "bg-gray-300";
-      }
-      return res;
     },
   },
   methods:{

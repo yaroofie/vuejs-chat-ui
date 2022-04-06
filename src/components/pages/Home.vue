@@ -28,6 +28,7 @@ export default {
           "seen",
           "This group was created by the admin.",
           "23/3/2022",
+          "9:00",
           null
         ),
         new message(
@@ -41,6 +42,7 @@ export default {
           "seen",
           "Hello guys",
           "23/3/2022",
+          "12:27",
           null
         ),
         new message(
@@ -54,6 +56,7 @@ export default {
           "seen",
           "Hello user1 how are you today ?",
           "23/3/2022",
+          "15:40",
           null
         ),
         new message(
@@ -67,6 +70,7 @@ export default {
           "seen",
           "I'm fine thank you and you ?",
           "23/3/2022",
+          "20:50",
           null
         ),
         new message(
@@ -80,6 +84,7 @@ export default {
           "seen",
           "fantastic",
           "23/3/2022",
+          "23:03",
           null
         ),
         new message(
@@ -93,6 +98,7 @@ export default {
           "seen",
           "Hello guys",
           "24/3/2022",
+          "9:45",
           null
         ),
         new message(
@@ -106,6 +112,7 @@ export default {
           "seen",
           "Do any of you guys have any idea about the new project ?",
           "24/3/2022",
+          "11:34",
           null
         ),
         new message(
@@ -119,6 +126,7 @@ export default {
           "seen",
           "I'm not sure",
           "24/3/2022",
+          "12:00",
           7
         ),
       ],
@@ -141,7 +149,7 @@ export default {
     addUiData() {
       this.messages.forEach((message, index) => {
         // see if message should show date or not
-        if (!this.messages.find((m, i) => m.time == message.time && m.withDate))
+        if (!this.messages.find((m, i) => m.date == message.date && m.withDate))
           message.withDate = true;
         if (message.type !== "info") {
           // add sender's color
@@ -188,6 +196,7 @@ class message {
   type;
   status;
   message;
+  date;
   time;
   reply;
   color;
@@ -196,12 +205,13 @@ class message {
   _position = "";
   _reply;
 
-  constructor(id, sender, type, status, message, time, reply) {
+  constructor(id, sender, type, status, message, date,time, reply) {
     this.id = id;
     this.sender = sender;
     this.type = type;
     this.status = status;
     this.message = message;
+    this.date = date;
     this.time = time;
     this.reply = reply;
     this.color = "";
