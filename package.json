@@ -7,9 +7,13 @@
     "preview": "vite preview --port 5050"
   },
   "dependencies": {
+    "@vuelidate/core": "^2.0.0-alpha.40",
+    "@vuelidate/validators": "^2.0.0-alpha.28",
     "axios": "^0.26.1",
+    "daisyui": "^2.13.6",
     "pinia": "^2.0.13",
     "vue": "^3.2.31",
+    "vue-flatpickr-component": "^9.0.5",
     "vue-router": "^4.0.14",
     "vue3-perfect-scrollbar": "^1.6.0"
   },

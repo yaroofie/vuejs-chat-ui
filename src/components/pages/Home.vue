@@ -7,16 +7,21 @@
         :message="message"
       />
     </ul>
+    <template v-slot:footer>
+      <ChatInput />
+    </template>
   </Template>
 </template>
 
 <script>
 import Template from "@/components/templates/Chat.vue";
 import MessageItem from "@/components/organisms/lists/MessageItem.vue";
+import ChatInput from "@/components/organisms/footer/ChatInput.vue";
 export default {
   components: {
     Template,
     MessageItem,
+    ChatInput,
   },
   data() {
     return {
