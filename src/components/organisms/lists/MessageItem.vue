@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-wrap" :class="message.getPosition()">
+  <div class="flex flex-wrap" :class="message.getPosition()" :id="`#chat-message-${message.id}`">
     <!-- Date -->
     <div v-if="message.withDate" class="w-full text-center mb-4">
       <span class="p-2 text-sm rounded bg-slate-800 text-slate-200">
@@ -22,7 +22,7 @@
         />
       </div>
       <!-- reply -->
-      <div v-if="message._reply" class="p-2 rounded bg-slate-400">
+      <router-link :to="`#chat-message-${message.reply}`" v-if="message._reply" class="p-2 rounded block bg-slate-400">
         <div class="flex">
           <div class="w-1" :class="usernameClass(message._reply)" />
           <p
@@ -31,6 +31,15 @@
           />
         </div>
         {{ message._reply.message }}
+      </router-link>
+      <!-- attachments -->
+      <div class="flex flex-wrap" v-if="message.attachments">
+        <div v-for="(attachment,index) in message.attachments" :key="index" class="mx-1 max-w-sm">
+          <img v-if="attachment.type == 'image'" :src="attachment.src" alt="" class="w-full mb-1"/>
+          <audio v-else-if="attachment.type == 'audio'" id="audio" controls>
+            <source :src="attachment.src" />
+          </audio>
+        </div>
       </div>
       <!-- message -->
       {{ message.message }}
@@ -51,6 +60,27 @@ export default {
       type: Object,
     },
   },
+  data() {
+    return {
+      imageTypes: [
+        "image/apng",
+        "image/bmp",
+        "image/gif",
+        "image/jpeg",
+        "image/pjpeg",
+        "image/png",
+        "image/svg+xml",
+        "image/tiff",
+        "image/webp",
+        "image/x-icon",
+      ],
+      audioTypes:[
+        "audio/mpeg",
+        "audio/ogg",
+        "audio/mp3",
+      ],
+    }
+  },
   methods:{
     usernameClass(message) {
       let res = "";
@@ -59,7 +89,9 @@ export default {
       }
       return res;
     },
-
+    getFileSource(file){
+      return URL.createObjectURL(file);
+    }
   }
 };
 </script>
