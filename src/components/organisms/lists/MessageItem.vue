@@ -60,21 +60,23 @@
         </div>
       </div>
       <!-- message content -->
-      <!-- link -->
-      <a
-        v-if="
-          message.message.includes('http') || message.message.includes('www.')
-        "
-        :href="message.message"
-        class="btn-link"
-        target="_blank"
-      >
-        {{ message.message }}
-      </a>
-      <!-- text -->
-      <p v-else>
-        {{ message.message }}
-      </p>
+      <div class="" v-if="message.message">
+        <!-- link -->
+        <a
+          v-if="
+            message.message.includes('http') || message.message.includes('www.')
+          "
+          :href="message.message"
+          class="btn-link"
+          target="_blank"
+        >
+          {{ message.message }}
+        </a>
+        <!-- text -->
+        <p v-else>
+          {{ message.message }}
+        </p>
+      </div>
       <!-- time and status -->
       <div class="px-2 flex justify-end">
         <span class="text-xs">
