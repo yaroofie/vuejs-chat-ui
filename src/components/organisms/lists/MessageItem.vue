@@ -1,5 +1,9 @@
 <template>
-  <div class="flex flex-wrap" :class="message.getPosition()" :id="`#chat-message-${message.id}`">
+  <div
+    class="flex flex-wrap"
+    :class="message.getPosition()"
+    :id="`#chat-message-${message.id}`"
+  >
     <!-- Date -->
     <div v-if="message.withDate" class="w-full text-center mb-4">
       <span class="p-2 text-sm rounded bg-slate-800 text-slate-200">
@@ -11,7 +15,11 @@
       {{ message.message }}
     </p>
     <!-- normal message -->
-    <div v-else class="mb-4 p-2 rounded shadow-lg bg-gray-300" :class="message._isMe ? 'bg-lime-200' : ''">
+    <div
+      v-else
+      class="mb-4 p-2 rounded shadow-lg bg-gray-300"
+      :class="message._isMe ? 'bg-lime-200' : ''"
+    >
       <!-- sender -->
       <div class="flex">
         <div class="w-1" :class="usernameClass(message)" />
@@ -22,27 +30,51 @@
         />
       </div>
       <!-- reply -->
-      <router-link :to="`#chat-message-${message.reply}`" v-if="message._reply" class="p-2 rounded block bg-slate-400">
+      <router-link
+        :to="`#chat-message-${message.reply}`"
+        v-if="message._reply"
+        class="p-2 rounded block bg-slate-400"
+      >
         <div class="flex">
           <div class="w-1" :class="usernameClass(message._reply)" />
-          <p
-            v-text="message._reply.sender.username"
-            class="mx-2"
-          />
+          <p v-text="message._reply.sender.username" class="mx-2" />
         </div>
         {{ message._reply.message }}
       </router-link>
       <!-- attachments -->
       <div class="flex flex-wrap" v-if="message.attachments">
-        <div v-for="(attachment,index) in message.attachments" :key="index" class="mx-1 max-w-sm">
-          <img v-if="attachment.type == 'image'" :src="attachment.src" alt="" class="w-full mb-1"/>
+        <div
+          v-for="(attachment, index) in message.attachments"
+          :key="index"
+          class="mx-1 max-w-sm"
+        >
+          <img
+            v-if="attachment.type == 'image'"
+            :src="attachment.src"
+            alt=""
+            class="w-full mb-1"
+          />
           <audio v-else-if="attachment.type == 'audio'" id="audio" controls>
             <source :src="attachment.src" />
           </audio>
         </div>
       </div>
-      <!-- message -->
-      {{ message.message }}
+      <!-- message content -->
+      <!-- link -->
+      <a
+        v-if="
+          message.message.includes('http') || message.message.includes('www.')
+        "
+        :href="message.message"
+        class="btn-link"
+        target="_blank"
+      >
+        {{ message.message }}
+      </a>
+      <!-- text -->
+      <p v-else>
+        {{ message.message }}
+      </p>
       <!-- time and status -->
       <div class="px-2 flex justify-end">
         <span class="text-xs">
@@ -74,14 +106,10 @@ export default {
         "image/webp",
         "image/x-icon",
       ],
-      audioTypes:[
-        "audio/mpeg",
-        "audio/ogg",
-        "audio/mp3",
-      ],
-    }
+      audioTypes: ["audio/mpeg", "audio/ogg", "audio/mp3"],
+    };
   },
-  methods:{
+  methods: {
     usernameClass(message) {
       let res = "";
       if (message.color) {
@@ -89,9 +117,9 @@ export default {
       }
       return res;
     },
-    getFileSource(file){
+    getFileSource(file) {
       return URL.createObjectURL(file);
-    }
-  }
+    },
+  },
 };
 </script>
