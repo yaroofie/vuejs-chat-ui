@@ -48,8 +48,10 @@
         icon="fa-microphone"
         rounded
         md
+        id="chat-voice-button"
         @mousedown="startVoiceRecord"
         @mouseup="stopVoiceRecord"
+        @mouseleave="stopVoiceRecord"
       />
     </div>
   </div>
@@ -87,7 +89,7 @@ export default {
         date: null,
         time: null,
         reply: null,
-        attachments: []
+        attachments: [],
       },
 
       imageTypes: [
@@ -102,55 +104,43 @@ export default {
         "image/webp",
         "image/x-icon",
       ],
-      audioTypes:[
-        "audio/mpeg",
-        "audio/ogg",
-        "audio/mp3",
-      ],
+      audioTypes: ["audio/mpeg", "audio/ogg", "audio/mp3"],
     };
   },
+  mounted() {},
   methods: {
-    startVoiceRecord() {
-      let self = this;
-      navigator.mediaDevices
-        .getUserMedia(
-          // constraints - only audio needed for this app
-          {
-            audio: true,
-          }
-        )
+    async captureMediaDevices() {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      return stream;
+    },
+    async startVoiceRecord() {
+      const stream = await this.captureMediaDevices();
+      this.mediaRecorder = new MediaRecorder(stream);
+      this.voiceChunks = [];
 
-        // Success callback
-        .then(function (stream) {
-          self.mediaRecorder = new MediaRecorder(stream);
-          self.mediaRecorder.start();
-          console.log(self.mediaRecorder.state);
-          console.log("recorder started");
-          self.voiceChunks = [];
+      this.mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          this.voiceChunks.push(event.data);
+        }
+      };
 
-          self.mediaRecorder.ondataavailable = function (e) {
-            self.voiceChunks.push(e.data);
-          };
-        })
-
-        // Error callback
-        .catch(function (err) {
-          console.log("The following getUserMedia error occurred: " + err);
+      this.mediaRecorder.onstop = () => {
+        const blob = new Blob(this.voiceChunks, {
+          type: "audio/mp3;codecs=opus",
         });
+        this.voiceChunks = [];
+        const blobUrl = URL.createObjectURL(blob);
+        this.p.attachments.push({
+          type: "audio",
+          src: blobUrl,
+        })
+      };
+
+      this.mediaRecorder.start(200);
     },
     stopVoiceRecord() {
-      if(!this.mediaRecorder) return ;
-      this.mediaRecorder.stop();
-      console.log(this.mediaRecorder.state);
-      console.log("recorder stopped");
-      const blob = new Blob(this.voiceChunks, {
-        type: "audio/ogg; codecs=opus",
-      });
-      const audioURL = window.URL.createObjectURL(blob);
-      this.p.attachments.push({
-        src: audioURL,
-        type : 'audio',
-      })
+      if (!this.mediaRecorder) return;
+      this.mediaRecorder.stream.getTracks().forEach((track) => track.stop())
     },
     submit() {
       this.p.date = this.getFormatedDate();
@@ -220,29 +210,32 @@ export default {
           for (var index = 0; index < files.length; index++) {
             let file = files[index];
             let type = "";
-            if(this.imageTypes.includes(file.type)) type = "image";
-            else if(this.audioTypes.includes(file.type)) type = "audio"
+            if (this.imageTypes.includes(file.type)) type = "image";
+            else if (this.audioTypes.includes(file.type)) type = "audio";
             if (this.validFileType(file)) {
               const imageURL = window.URL.createObjectURL(file);
               this.p.attachments.push({
                 src: imageURL,
-                type: type
-              })
+                type: type,
+              });
             } else
               console.log(
                 `File name ${file.name}: Not a valid file type. Update your selection.`
               );
           }
           // show editor if there is an attachment
-          if(this.p.attachments.length) {
-              this.chat.showEditor = true;
-              this.chat.editorFiles = files
+          if (this.p.attachments.length) {
+            this.chat.showEditor = true;
+            this.chat.editorFiles = files;
           }
         }
       }
     },
     validFileType(file) {
-      return this.imageTypes.includes(file.type) || this.audioTypes.includes(file.type);
+      return (
+        this.imageTypes.includes(file.type) ||
+        this.audioTypes.includes(file.type)
+      );
     },
   },
   computed: {},
