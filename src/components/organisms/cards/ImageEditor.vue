@@ -9,7 +9,8 @@
         rounded
         @click="chat.showEditor = false"
       />
-      <div class="flex justify-center">
+      <!-- for later -->
+      <div class="flex justify-center" v-if="false">
         <ButtonIcon
           icon="fa-xmark"
           class="btn-ghost"
@@ -64,12 +65,12 @@
     <!-- show images -->
     <div class="carousel w-full mb-5">
       <div
-        v-for="(file, index) in chat.editorFiles"
+        v-for="(attachment, index) in chat.new_message.attachments"
         :key="`preview-${index}`"
         :id="`slide-${index}`"
         class="carousel-item relative w-full"
       >
-        <img :src="createURL(file)" class="w-full" />
+        <img :src="attachment.src" class="w-full" />
 
         <div
           class="
@@ -92,7 +93,9 @@
           <a
             :href="`#slide-${index + 1}`"
             class="btn btn-circle btn-primary"
-            :class="index + 1 < chat.editorFiles.length ? '' : 'invisible'"
+            :class="
+              index + 1 < chat.new_message.attachments.length ? '' : 'invisible'
+            "
             >❯</a
           >
         </div>
@@ -101,8 +104,21 @@
     <div class="">
       <!-- get caption -->
       <div class="flex justify-center items-center mb-5">
-        <FormControl label="" placeholder="Type a message" class="w-1/2" />
-        <ButtonIcon icon="fa-paper-plane" rounded md class="mx-2" />
+        <FormControl
+          label=""
+          placeholder="Type a message"
+          class="w-1/2"
+          v-model="chat.new_message.message"
+          @keydown.enter="chat.send"
+          @keydown="changeType('text')"
+        />
+        <ButtonIcon
+          icon="fa-paper-plane"
+          rounded
+          md
+          class="mx-2"
+          @click="chat.send"
+        />
       </div>
     </div>
   </div>
@@ -123,8 +139,8 @@ export default {
     };
   },
   methods: {
-    createURL(file) {
-      return window.URL.createObjectURL(file);
+    changeType(t) {
+      this.chat.new_message.type = t;
     },
   },
 };
