@@ -79,8 +79,12 @@
       </div>
       <!-- time and status -->
       <div class="px-2 flex justify-end">
-        <span class="text-xs">
+        <span class="text-xs" :class="message._isMe ? 'mx-2' : ''">
           {{ message.time }}
+        </span>
+        <span v-if="message._isMe" class="text-xs">
+          <i v-if="message.status == ''" class="text-gray-400 fa-solid fa-check"></i>
+          <i v-if="message.status == 'seen'" class="text-green-400 fa-solid fa-check-double"></i>
         </span>
       </div>
     </div>
