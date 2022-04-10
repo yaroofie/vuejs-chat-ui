@@ -16,8 +16,8 @@
             placeholder="Message"
             class="w-full"
             input-class="pl-10"
-            v-model="p.message"
-            @keydown.enter="submit"
+            v-model="chat.new_message.message"
+            @keydown.enter="chat.send"
             @keydown="changeType('text')"
           />
           <!-- camera , file -->
@@ -60,7 +60,6 @@
 <script>
 import ButtonIcon from "@/components/atoms/ButtonIcon.vue";
 import FormControl from "@/components/molecules/input/FormControl.vue";
-import Message from "@/class/Message.js";
 import { useChat } from "@/stores/chat";
 export default {
   name: "ChatInput",
@@ -75,22 +74,6 @@ export default {
       supportsVoice: false,
       mediaRecorder: null,
       voiceChunks: [],
-
-      p: {
-        id: null,
-        sender: {
-          id: 5,
-          username: "me",
-          avatar: "https://api.lorem.space/image/face?hash=cfsbilce",
-        },
-        type: "",
-        status: "",
-        message: null,
-        date: null,
-        time: null,
-        reply: null,
-        attachments: [],
-      },
 
       imageTypes: [
         "image/apng",
@@ -130,70 +113,22 @@ export default {
         });
         this.voiceChunks = [];
         const blobUrl = URL.createObjectURL(blob);
-        this.p.attachments.push({
+        this.chat.new_message.attachments.push({
           type: "audio",
+          file: blob,
           src: blobUrl,
-        })
+        });
       };
 
       this.mediaRecorder.start(200);
     },
     stopVoiceRecord() {
       if (!this.mediaRecorder) return;
-      this.mediaRecorder.stream.getTracks().forEach((track) => track.stop())
-    },
-    submit() {
-      this.p.date = this.getFormatedDate();
-      this.p.time = this.getFormatedTime();
-
-      let payload = new Message(
-        this.p.id,
-        this.p.sender,
-        this.p.type,
-        this.p.status,
-        this.p.message,
-        this.p.date,
-        this.p.time,
-        this.p.reply,
-        this.p.attachments
-      );
-      this.chat.messages.push(payload);
-      this.reset();
-    },
-    reset() {
-      this.p = {
-        id: null,
-        sender: {
-          id: 5,
-          username: "me",
-          avatar: "https://api.lorem.space/image/face?hash=cfsbilce",
-        },
-        type: "",
-        status: "",
-        message: null,
-        date: null,
-        time: null,
-        reply: null,
-        attachments: [],
-      };
-    },
-    getFormatedDate() {
-      let date = new Date();
-      let fullYear = date.getFullYear();
-      let month = date.getMonth() + 1;
-      let day = date.getDate();
-      let response = day + "/" + month + "/" + fullYear;
-      return response;
-    },
-    getFormatedTime() {
-      let date = new Date();
-      let hour = date.getHours();
-      let minutes = date.getMinutes();
-      let response = hour + ":" + minutes;
-      return response;
+      this.mediaRecorder.stream.getTracks().forEach((track) => track.stop());
+      this.chat.send();
     },
     changeType(t) {
-      this.p.type = t;
+      this.chat.new_message.type = t;
     },
     selectFile() {
       let element = document.getElementById("chat-file-input");
@@ -214,8 +149,9 @@ export default {
             else if (this.audioTypes.includes(file.type)) type = "audio";
             if (this.validFileType(file)) {
               const imageURL = window.URL.createObjectURL(file);
-              this.p.attachments.push({
+              this.chat.new_message.attachments.push({
                 src: imageURL,
+                file: file,
                 type: type,
               });
             } else
@@ -224,9 +160,8 @@ export default {
               );
           }
           // show editor if there is an attachment
-          if (this.p.attachments.length) {
+          if (this.chat.new_message.attachments.length) {
             this.chat.showEditor = true;
-            this.chat.editorFiles = files;
           }
         }
       }

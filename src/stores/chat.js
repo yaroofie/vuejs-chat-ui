@@ -1,12 +1,26 @@
-import { defineStore } from 'pinia'
-import message from "@/class/Message.js";
-export const useChat = defineStore({
+import { defineStore } from 'pinia';
+import Message from "@/class/Message.js";
+export const useChat = defineStore( {
   id: 'chat',
   state: () => ( {
     showEditor: false,
-    editorFiles: [],
+    new_message: new Message(
+      null,
+      {
+        id: 5,
+        username: "me",
+        avatar: "https://api.lorem.space/image/face?hash=cfsbilce",
+      },
+      "",
+      "",
+      null,
+      null,
+      null,
+      null,
+      [],
+    ),
     messages: [
-      new message(
+      new Message(
         1,
         null,
         "info",
@@ -16,7 +30,7 @@ export const useChat = defineStore({
         "9:00",
         null
       ),
-      new message(
+      new Message(
         2,
         {
           id: 1,
@@ -30,7 +44,7 @@ export const useChat = defineStore({
         "12:27",
         null
       ),
-      new message(
+      new Message(
         3,
         {
           id: 2,
@@ -44,7 +58,7 @@ export const useChat = defineStore({
         "15:40",
         null
       ),
-      new message(
+      new Message(
         4,
         {
           id: 1,
@@ -58,7 +72,7 @@ export const useChat = defineStore({
         "20:50",
         null
       ),
-      new message(
+      new Message(
         5,
         {
           id: 2,
@@ -72,7 +86,7 @@ export const useChat = defineStore({
         "23:03",
         null
       ),
-      new message(
+      new Message(
         6,
         {
           id: 4,
@@ -86,7 +100,7 @@ export const useChat = defineStore({
         "9:45",
         null
       ),
-      new message(
+      new Message(
         7,
         {
           id: 4,
@@ -100,7 +114,7 @@ export const useChat = defineStore({
         "11:34",
         null
       ),
-      new message(
+      new Message(
         8,
         {
           id: 5,
@@ -115,11 +129,58 @@ export const useChat = defineStore({
         7
       ),
     ]
-  }),
+  } ),
   getters: {
-    
+
   },
   actions: {
-    
+    reset ()
+    {
+      this.new_message = new Message(
+        null,
+        {
+          id: 5,
+          username: "me",
+          avatar: "https://api.lorem.space/image/face?hash=cfsbilce",
+        },
+        "",
+        "",
+        null,
+        null,
+        null,
+        null,
+        [],
+      );
+      this.showEditor = false;
+    },
+    send ()
+    {
+      if (
+        !this.new_message.message &&
+        this.new_message.attachments.length == 0
+      )
+        return;
+      this.new_message.date = this.getFormatedDate();
+      this.new_message.time = this.getFormatedTime();
+      this.messages.push( this.new_message );
+      this.reset();
+    },
+    getFormatedDate ()
+    {
+      let date = new Date();
+      let fullYear = date.getFullYear();
+      let month = date.getMonth() + 1;
+      let day = date.getDate();
+      let response = day + "/" + month + "/" + fullYear;
+      return response;
+    },
+    getFormatedTime ()
+    {
+      let date = new Date();
+      let hour = date.getHours();
+      let minutes = date.getMinutes();
+      let response = hour + ":" + minutes;
+      return response;
+    },
   }
-})
+} );
