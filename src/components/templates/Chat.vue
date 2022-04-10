@@ -10,7 +10,7 @@
       <slot name="footer"></slot>
     </footer>
     <div
-      class="absolute bottom-0 left-0 w-full image-editor bg-gray-500 bg-opacity-80"
+      class="absolute bottom-0 left-0 w-full image-editor bg-stone-200"
       v-if="chat.showEditor"
     >
       <slot name="editor"></slot>
