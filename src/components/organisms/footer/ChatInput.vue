@@ -23,7 +23,7 @@
             label=""
             placeholder="Message"
             class="w-full"
-            input-class="pl-20"
+            input-class="px-20"
             v-model="chat.new_message.message"
             @keydown.enter="chat.send"
             @keydown="changeType('text')"
