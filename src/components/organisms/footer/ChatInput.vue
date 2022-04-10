@@ -5,17 +5,25 @@
       <div class="rounded-full flex justify-between items-center">
         <!-- emoji , text -->
         <div class="w-full flex justify-between items-center relative">
-          <ButtonIcon
+          <!-- <ButtonIcon
             icon="fa-smile"
             rounded
             sm
             class="mx-1 btn-ghost absolute"
-          />
+          /> -->
+          <div class="p-4 pt-0 absolute flex justify-center items-center">
+            <DiscordPicker
+              @click="replaceEmojiPicker()"
+              @emoji="setEmoji"
+              @gif="setGif"
+              apiKey="378ODGII6ULF"
+            />
+          </div>
           <FormControl
             label=""
             placeholder="Message"
             class="w-full"
-            input-class="pl-10"
+            input-class="pl-20"
             v-model="chat.new_message.message"
             @keydown.enter="chat.send"
             @keydown="changeType('text')"
@@ -60,11 +68,13 @@
 <script>
 import ButtonIcon from "@/components/atoms/ButtonIcon.vue";
 import FormControl from "@/components/molecules/input/FormControl.vue";
+import DiscordPicker from "vue3-discordpicker";
 import { useChat } from "@/stores/chat";
 export default {
   name: "ChatInput",
   components: {
     ButtonIcon,
+    DiscordPicker,
     FormControl,
   },
   data() {
@@ -74,7 +84,7 @@ export default {
       supportsVoice: false,
       mediaRecorder: null,
       voiceChunks: [],
-
+      emoji: "",
       imageTypes: [
         "image/apng",
         "image/bmp",
@@ -90,8 +100,20 @@ export default {
       audioTypes: ["audio/mpeg", "audio/ogg", "audio/mp3"],
     };
   },
-  mounted() {},
+  mounted() {
+
+  },
   methods: {
+    setEmoji(emoji) {
+      this.chat.new_message.message += emoji;
+    },
+    setGif (gif) {
+      this.chat.new_message.attachments.push({
+        src: gif,
+        file: null,
+        type: "image",
+      });
+    },
     async captureMediaDevices() {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       return stream;
@@ -171,6 +193,11 @@ export default {
         this.imageTypes.includes(file.type) ||
         this.audioTypes.includes(file.type)
       );
+    },
+    replaceEmojiPicker() {
+      let element = document.querySelector(".vue3-discord-emojipicker");
+      if (!element) return;
+      element.classList.remove("right-0");
     },
   },
   computed: {},
