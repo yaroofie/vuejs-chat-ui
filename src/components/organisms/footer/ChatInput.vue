@@ -1,5 +1,19 @@
 <template>
-  <div class="flex items-center">
+  <div class="flex items-center relative">
+    <!-- reply -->
+    <div
+      class="w-full absolute bottom-full p-4 bg-slate-200 rounded-md"
+      v-if="chat.new_message.reply"
+    >
+    <div class="flex justify-between">
+      <div class="flex">
+        <div class="w-1" :class="'bg-' + chat.new_message._reply.color" />
+        <p v-text="chat.new_message._reply.sender.username" class="mx-2" />
+      </div>
+      <ButtonIcon icon="fa-xmark" rounded xs class="btn-ghost" @click="noReply()"/>
+    </div>
+      {{ chat.new_message._reply.message }}
+    </div>
     <!-- emoji , text , camera , file -->
     <div class="w-full">
       <div class="rounded-full flex justify-between items-center">
@@ -80,7 +94,6 @@ export default {
   data() {
     return {
       chat: useChat(),
-
       supportsVoice: false,
       mediaRecorder: null,
       voiceChunks: [],
@@ -100,19 +113,20 @@ export default {
       audioTypes: ["audio/mpeg", "audio/ogg", "audio/mp3"],
     };
   },
-  mounted() {
-
-  },
   methods: {
     setEmoji(emoji) {
       this.chat.new_message.message += emoji;
     },
-    setGif (gif) {
+    setGif(gif) {
       this.chat.new_message.attachments.push({
         src: gif,
         file: null,
         type: "image",
       });
+    },
+    noReply(){
+      this.chat.new_message._reply = null;
+      this.chat.new_message.reply = null;
     },
     async captureMediaDevices() {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -200,9 +214,15 @@ export default {
       element.classList.remove("right-0");
     },
   },
-  computed: {},
-  watch: {},
-  created() {},
+  watch: {
+    "chat.new_message.reply": {
+      handler(val) {
+        if (val) {
+          console.log("reply", val);
+        }
+      },
+    },
+  },
   mounted() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
       this.supportsVoice = true;

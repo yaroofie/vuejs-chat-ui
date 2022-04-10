@@ -55,6 +55,7 @@ export default {
   methods: {
     reply(message){
       this.chat.new_message.reply = message.id;
+      this.chat.new_message._reply = message
     },
     remove(message){
       this.chat.remove(message);

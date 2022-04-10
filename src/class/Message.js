@@ -57,6 +57,7 @@ export default class message
 
    setReply ( reply )
    {
+      this.reply = reply.id;
       this._reply = reply;
    }
 }
