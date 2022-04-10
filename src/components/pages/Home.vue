@@ -5,6 +5,8 @@
         v-for="(message, index) in chat.messages"
         :key="index"
         :message="message"
+        @reply="reply(message)"
+        @remove="remove(message)"
       />
     </ul>
     
@@ -51,6 +53,12 @@ export default {
     },
   },
   methods: {
+    reply(message){
+      this.chat.new_message.reply = message.id;
+    },
+    remove(message){
+      this.chat.remove(message);
+    },
     addUiData() {
       this.chat.messages.forEach((message, index) => {
         // see if message should show date or not

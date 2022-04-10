@@ -162,6 +162,7 @@ export const useChat = defineStore( {
         return;
       this.new_message.date = this.getFormatedDate();
       this.new_message.time = this.getFormatedTime();
+      this.new_message.id = this.messages.length + 1;
       this.messages.push( this.new_message );
       this.reset();
     },
@@ -182,5 +183,13 @@ export const useChat = defineStore( {
       let response = hour + ":" + minutes;
       return response;
     },
+    remove ( message )
+    {
+      if ( !message instanceof Message ) return;
+      console.log( "removing the message" );
+      let index = this.messages.indexOf( message );
+      if(index < 0 ) return;
+      this.messages.splice( index, 1 );
+    }
   }
 } );
