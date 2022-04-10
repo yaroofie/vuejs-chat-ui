@@ -66,7 +66,7 @@
           v-if="
             message.message.includes('http') || message.message.includes('www.')
           "
-          :href="message.message"
+          :href="message.message.indexOf('http') === 0 ? message.message : `http://${message.message}`"
           class="btn-link"
           target="_blank"
         >
