@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center relative">
     <!-- typing status -->
-    <div class="w-full absolute bottom-full px-4" v-if="typing != ''">
+    <div class="w-full absolute bottom-full px-4 py-1 bg-slate-50" v-if="typing != ''">
       <p class="text-sm">
         {{ typing }}
       </p>
