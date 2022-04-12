@@ -1,17 +1,23 @@
 <template>
   <div class="flex items-center relative">
+    <!-- typing status -->
+    <div class="w-full absolute bottom-full px-4" v-if="typing != ''">
+      <p class="text-sm">
+        {{ typing }}
+      </p>
+    </div>
     <!-- reply -->
     <div
       class="w-full absolute bottom-full p-4 bg-slate-200 rounded-md"
       v-if="chat.new_message.reply"
     >
-    <div class="flex justify-between">
-      <div class="flex">
-        <div class="w-1" :class="'bg-' + chat.new_message._reply.color" />
-        <p v-text="chat.new_message._reply.sender.username" class="mx-2" />
+      <div class="flex justify-between">
+        <div class="flex">
+          <div class="w-1" :class="'bg-' + chat.new_message._reply.color" />
+          <p v-text="chat.new_message._reply.sender.username" class="mx-2" />
+        </div>
+        <ButtonIcon icon="fa-xmark" rounded xs class="btn-ghost" @click="noReply()"/>
       </div>
-      <ButtonIcon icon="fa-xmark" rounded xs class="btn-ghost" @click="noReply()"/>
-    </div>
       {{ chat.new_message._reply.message }}
     </div>
     <!-- emoji , text , camera , file -->
@@ -98,6 +104,7 @@ export default {
       mediaRecorder: null,
       voiceChunks: [],
       emoji: "",
+      typing : "",
       imageTypes: [
         "image/apng",
         "image/bmp",
@@ -226,6 +233,13 @@ export default {
   mounted() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
       this.supportsVoice = true;
+
+    setInterval(() => {
+      this.typing = "user is typing ..."
+      setTimeout(() => {
+        this.typing = "";
+      }, 5000);
+    }, 10000);
   },
 };
 </script>
