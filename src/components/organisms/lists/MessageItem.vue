@@ -133,6 +133,9 @@
           <audio v-else-if="attachment.type == 'audio'" id="audio" controls>
             <source :src="attachment.src" />
           </audio>
+          <video v-else-if="attachment.type == 'video'" id="video" controls>
+            <source :src="attachment.src" />
+          </video>
         </div>
       </div>
       <!-- message content -->

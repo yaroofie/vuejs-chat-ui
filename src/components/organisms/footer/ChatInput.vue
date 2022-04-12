@@ -1,7 +1,10 @@
 <template>
   <div class="flex items-center relative">
     <!-- typing status -->
-    <div class="w-full absolute bottom-full px-4 py-1 bg-slate-50" v-if="typing != ''">
+    <div
+      class="w-full absolute bottom-full px-4 py-1 bg-slate-50"
+      v-if="typing != ''"
+    >
       <p class="text-sm">
         {{ typing }}
       </p>
@@ -16,7 +19,13 @@
           <div class="w-1" :class="'bg-' + chat.new_message._reply.color" />
           <p v-text="chat.new_message._reply.sender.username" class="mx-2" />
         </div>
-        <ButtonIcon icon="fa-xmark" rounded xs class="btn-ghost" @click="noReply()"/>
+        <ButtonIcon
+          icon="fa-xmark"
+          rounded
+          xs
+          class="btn-ghost"
+          @click="noReply()"
+        />
       </div>
       {{ chat.new_message._reply.message }}
     </div>
@@ -54,7 +63,7 @@
               icon="fa-paperclip"
               rounded
               sm
-              class="btn-ghost"
+              class="mx-1 btn-ghost"
               @click="selectFile()"
             />
             <input
@@ -65,7 +74,16 @@
               class="hidden"
               multiple
             />
-            <ButtonIcon icon="fa-camera" rounded sm class="mx-1 btn-ghost" />
+            <ButtonIcon
+              v-if="supportsVideo"
+              icon="fa-camera"
+              rounded
+              sm
+              class="mx-1 btn-ghost"
+              @mousedown="startVideoRecord"
+              @mouseup="stopRecord"
+              @mouseleave="stopRecord"
+            />
           </div>
         </div>
       </div>
@@ -78,8 +96,8 @@
         md
         id="chat-voice-button"
         @mousedown="startVoiceRecord"
-        @mouseup="stopVoiceRecord"
-        @mouseleave="stopVoiceRecord"
+        @mouseup="stopRecord"
+        @mouseleave="stopRecord"
       />
     </div>
   </div>
@@ -101,10 +119,12 @@ export default {
     return {
       chat: useChat(),
       supportsVoice: false,
+      supportsVideo: false,
       mediaRecorder: null,
       voiceChunks: [],
+      videoChunks: [],
       emoji: "",
-      typing : "",
+      typing: "",
       imageTypes: [
         "image/apng",
         "image/bmp",
@@ -131,16 +151,51 @@ export default {
         type: "image",
       });
     },
-    noReply(){
+    noReply() {
       this.chat.new_message._reply = null;
       this.chat.new_message.reply = null;
     },
-    async captureMediaDevices() {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    async getDevices() {
+      return await navigator.mediaDevices.enumerateDevices();
+    },
+    async captureMediaDevices(config) {
+      const stream = await navigator.mediaDevices.getUserMedia(config);
       return stream;
     },
+    async startVideoRecord() {
+      const stream = await this.captureMediaDevices({
+        audio: true,
+        video: {
+          width: { min: 1024, ideal: 1280, max: 1920 },
+          height: { min: 576, ideal: 720, max: 1080 },
+        },
+      });
+      this.mediaRecorder = new MediaRecorder(stream);
+      this.videoChunks = [];
+
+      this.mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          this.videoChunks.push(event.data);
+        }
+      };
+
+      this.mediaRecorder.onstop = () => {
+        const blob = new Blob(this.videoChunks, {
+          type: "video/webm",
+        });
+        this.videoChunks = [];
+        const blobUrl = URL.createObjectURL(blob);
+        this.chat.new_message.attachments.push({
+          type: "video",
+          file: blob,
+          src: blobUrl,
+        });
+      };
+
+      this.mediaRecorder.start(200);
+    },
     async startVoiceRecord() {
-      const stream = await this.captureMediaDevices();
+      const stream = await this.captureMediaDevices({ audio: true });
       this.mediaRecorder = new MediaRecorder(stream);
       this.voiceChunks = [];
 
@@ -165,7 +220,7 @@ export default {
 
       this.mediaRecorder.start(200);
     },
-    stopVoiceRecord() {
+    stopRecord() {
       if (!this.mediaRecorder) return;
       this.mediaRecorder.stream.getTracks().forEach((track) => track.stop());
       this.chat.send();
@@ -231,11 +286,21 @@ export default {
     },
   },
   mounted() {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
-      this.supportsVoice = true;
+    let devices = this.getDevices();
+    devices.then(r => {
+      r.forEach(device => {
+      if(device.kind === "audioinput") {
+        console.log(device);
+        this.supportsVoice = true;
+      }
+      if(device.kind === "videoinput") {
+        this.supportsVideo = true;
+      }
+    });
+    })
 
     setInterval(() => {
-      this.typing = "user is typing ..."
+      this.typing = "user is typing ...";
       setTimeout(() => {
         this.typing = "";
       }, 5000);
