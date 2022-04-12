@@ -1,5 +1,13 @@
 <template>
-  <Template>
+  <Template class="overflow-hidden">
+    <template v-slot:group_info>
+      <ChatInfo v-if="chat.show_info" />
+    </template>
+
+    <template v-slot:header>
+      <ChatHeader @group_info="chat.show_info = true;" />
+    </template>
+
     <ul class="p-0">
       <MessageItem
         v-for="(message, index) in chat.messages"
@@ -9,7 +17,7 @@
         @remove="remove(message)"
       />
     </ul>
-    
+
     <template v-slot:footer>
       <ChatInput />
     </template>
@@ -23,12 +31,16 @@
 <script>
 import Template from "@/components/templates/Chat.vue";
 import MessageItem from "@/components/organisms/lists/MessageItem.vue";
+import ChatHeader from "@/components/organisms/header/Chat.vue";
 import ChatInput from "@/components/organisms/footer/ChatInput.vue";
-import ImageEditor from "@/components/organisms/cards/ImageEditor.vue"
+import ImageEditor from "@/components/organisms/cards/ImageEditor.vue";
+import ChatInfo from "@/components/organisms/cards/ChatInfo.vue";
 import { useChat } from "@/stores/chat";
 export default {
   components: {
     Template,
+    ChatInfo,
+    ChatHeader,
     MessageItem,
     ChatInput,
     ImageEditor,
@@ -36,7 +48,7 @@ export default {
   data() {
     return {
       chat: useChat(),
-      colors: ["red-300", "orange-300", "teal-300", "green-300","sky-300"],
+      colors: ["red-300", "orange-300", "teal-300", "green-300", "sky-300"],
       username: "me",
     };
   },
@@ -53,11 +65,11 @@ export default {
     },
   },
   methods: {
-    reply(message){
+    reply(message) {
       this.chat.new_message.reply = message.id;
-      this.chat.new_message._reply = message
+      this.chat.new_message._reply = message;
     },
-    remove(message){
+    remove(message) {
       this.chat.remove(message);
     },
     addUiData() {

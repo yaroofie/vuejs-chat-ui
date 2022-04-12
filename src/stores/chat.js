@@ -4,6 +4,7 @@ export const useChat = defineStore( {
   id: 'chat',
   state: () => ( {
     showEditor: false,
+    show_info: false,
     new_message: new Message(
       null,
       {
@@ -19,6 +20,30 @@ export const useChat = defineStore( {
       null,
       [],
     ),
+    subject: "Chat name",
+    description: "Some description for the chat",
+    participants: [
+      {
+        id: 1,
+        username: "Alireza",
+        about: "I am a programmer",
+      },
+      {
+        id: 2,
+        username: "Mohammad",
+        about: "I am a programmer",
+      },
+      {
+        id: 3,
+        username: "Mr. Robot",
+        about: "I am a chatbot",
+      },
+      {
+        id: 4,
+        username: "Mr. X",
+        about: "",
+      },
+    ],
     messages: [
       new Message(
         1,

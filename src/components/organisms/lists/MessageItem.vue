@@ -17,8 +17,8 @@
     <!-- normal message -->
     <div
       v-else
-      class="mb-4 p-2 rounded shadow-lg bg-stone-300 relative"
-      :class="message._isMe ? 'bg-stone-300' : ''"
+      class="mb-4 p-2 rounded-lg shadow-lg bg-slate-100 relative"
+      :class="message._isMe ? '' : ''"
     >
       <div class="flex justify-between">
         <!-- sender -->
@@ -109,13 +109,15 @@
       <router-link
         :to="`#chat-message-${message.reply}`"
         v-if="message._reply"
-        class="m-2 mt-0 rounded block bg-slate-400 overflow-hidden"
+        class="p-2 mt-0 rounded block bg-stone-400 overflow-hidden"
       >
-        <div class="flex">
-          <div class="w-1" :class="'bg-' + message._reply.color" />
-          <p v-text="message._reply.sender.username" class="mx-2" />
-        </div>
-        {{ message._reply.message }}
+        <p
+          v-text="message._reply.sender.username"
+          :class="'text-' + message._reply.color"
+        />
+        <p>
+          {{ message._reply.message }}
+        </p>
       </router-link>
       <!-- attachments -->
       <div class="flex flex-wrap" v-if="message.attachments">
@@ -168,11 +170,11 @@
         <span v-if="message._isMe" class="text-xs">
           <i
             v-if="message.status == ''"
-            class="text-gray-400 fa-solid fa-check"
+            class="text-stone-600 fa-solid fa-check"
           ></i>
           <i
             v-if="message.status == 'seen'"
-            class="text-green-400 fa-solid fa-check-double"
+            class="text-stone-600 fa-solid fa-check-double"
           ></i>
         </span>
       </div>
@@ -215,18 +217,17 @@ export default {
     this.resize();
   },
   methods: {
-    resize(e){
-      console.log("window resize");
+    resize(e) {
       let menu = document.getElementById(`message-${this.message.id}`);
-      if(!menu) return;
+      if (!menu) return;
       let rect = menu.getBoundingClientRect();
       let windowWidth = window.innerWidth;
       let windowHeight = window.innerHeight;
 
-      if(rect.x + rect.width > windowWidth){
+      if (rect.x + rect.width > windowWidth) {
         this.menuPosition += " right-0 ";
       }
-      if(rect.y + rect.height > windowHeight){
+      if (rect.y + rect.height > windowHeight) {
         this.menuPosition += " bottom-0 ";
       }
     },

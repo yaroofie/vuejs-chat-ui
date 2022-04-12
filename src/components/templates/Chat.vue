@@ -1,14 +1,20 @@
 <template>
   <div class="container mx-auto relative">
-    <header class="sticky top-0 lg:p-4 h-16 lg:h-24">
+
+    <slot name="group_info" />
+
+    <header class="sticky top-0 lg:p-4 h-16 lg:h-24 z-40 bg-stone-300 shadow-lg">
       <slot name="header"></slot>
     </header>
-    <perfect-scrollbar class="p-4" id="chat-container">
+
+    <perfect-scrollbar class="p-4 z-0 bg-stone-200" id="chat-container">
       <slot></slot>
     </perfect-scrollbar>
-    <footer class="sticky bottom-0 lg:p-4 h-16 lg:h-24">
+
+    <footer class="sticky bottom-0 lg:p-4 h-16 lg:h-24 bg-stone-300">
       <slot name="footer"></slot>
     </footer>
+
     <div
       class="absolute bottom-0 left-0 w-full image-editor bg-stone-200"
       v-if="chat.showEditor"

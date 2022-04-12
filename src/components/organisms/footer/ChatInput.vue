@@ -2,7 +2,7 @@
   <div class="flex items-center relative">
     <!-- typing status -->
     <div
-      class="w-full absolute bottom-full px-4 py-1 bg-slate-50"
+      class="absolute bottom-full mb-5 px-4 py-1 bg-stone-400 rounded-full"
       v-if="typing != ''"
     >
       <p class="text-sm">
@@ -290,7 +290,6 @@ export default {
     devices.then(r => {
       r.forEach(device => {
       if(device.kind === "audioinput") {
-        console.log(device);
         this.supportsVoice = true;
       }
       if(device.kind === "videoinput") {
