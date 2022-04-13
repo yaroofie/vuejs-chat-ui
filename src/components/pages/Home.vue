@@ -131,8 +131,8 @@ export default {
           }
         }
       });
-      this.chat.reposition_dropdowns();
       setTimeout(() => {
+        this.chat.reposition_dropdowns();
         this.scrollToBottom("chat-container");
       }, 500);
     },

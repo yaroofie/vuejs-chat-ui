@@ -8,8 +8,10 @@
       <div v-if="chatStore.selected" class="w-full lg:w-2/3 relative">
         <slot name="group_info" />
 
+
         <header
           class="sticky top-0 lg:p-4 h-16 lg:h-24 bg-stone-300 shadow-lg z-40"
+          v-if="!chatStore.show_editor"
         >
           <slot name="header"></slot>
         </header>
@@ -21,6 +23,13 @@
         <footer class="sticky bottom-0 lg:p-4 h-16 lg:h-24 bg-stone-300">
           <slot name="footer"></slot>
         </footer>
+
+        <div
+          class="absolute bottom-0 left-0 w-full top-0 bg-stone-200"
+          v-if="chatStore.show_editor"
+        >
+          <slot name="editor"></slot>
+        </div>
       </div>
 
       <div
@@ -37,13 +46,6 @@
       >
         <h1 class="text-2xl">Select a chat to start messaging</h1>
       </div>
-    </div>
-
-    <div
-      class="absolute bottom-0 left-0 w-full top-0 bg-stone-200"
-      v-if="chatStore.show_editor"
-    >
-      <slot name="editor"></slot>
     </div>
   </div>
 </template>

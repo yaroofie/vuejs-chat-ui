@@ -260,7 +260,7 @@ export default {
           }
           // show editor if there is an attachment
           if (this.chat.new_message.attachments.length) {
-            this.chat.showEditor = true;
+            this.chat.show_editor = true;
           }
         }
       }
