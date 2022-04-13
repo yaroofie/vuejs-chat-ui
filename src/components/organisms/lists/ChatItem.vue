@@ -1,7 +1,7 @@
 <template>
   <li class="border-b border-b-stone-400">
     <a
-      class="flex items-center w-full lg:px-4 pb-2 hover:bg-stone-300"
+      class="flex items-center w-full lg:px-4 py-2 hover:bg-stone-300"
       :href="`#open-chat-${chat.id}`"
       @click.prevent="chatStore.selected = chat"
     >
@@ -12,7 +12,7 @@
       </div>
       <div class="mx-2 w-full">
         <p v-text="chat.subject" />
-        <p v-text="chat.description" class="text-sm mb-2 text-stone-500" />
+        <p v-text="chat.description" class="text-sm text-stone-500" />
       </div>
     </a>
   </li>

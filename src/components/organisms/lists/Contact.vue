@@ -1,14 +1,19 @@
 <template>
-  <li class="flex items-center lg:px-4 mb-2">
-    <div class="avatar">
-      <div class="w-10 rounded-full">
-        <img :src="u.avatar" />
+  <li class="border-b border-b-stone-400">
+    <a
+      class="flex items-center w-full lg:px-4 py-2 hover:bg-stone-300"
+      :href="`#select-user-${u.id}`"
+    >
+      <div class="avatar">
+        <div class="w-10 rounded-full">
+          <img :src="u.avatar" />
+        </div>
       </div>
-    </div>
-    <div class="mx-2 border-b border-b-stone-400 w-full">
-       <p v-text="u.username" />
-       <p v-text="u.about" class="text-sm mb-2 text-stone-500" />
-    </div>
+      <div class="mx-2 w-full">
+        <p v-text="u.username" />
+        <p v-text="u.about" class="text-sm text-stone-500" />
+      </div>
+    </a>
   </li>
 </template>
 

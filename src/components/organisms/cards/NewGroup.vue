@@ -38,17 +38,7 @@
         class="btn-ghost mx-5 mt-1 absolute right-0"
       />
     </div>
-    <!-- change new chat to new group button -->
-    <div class="flex items-center lg:px-4 mb-4">
-      <ButtonIcon
-        icon="fa-exchange"
-        rounded
-        md
-        class="btn-ghost"
-        @click="$emit('new_chat')"
-      />
-      <p class="text-lg border-b border-b-stone-400 w-full mx-2 pb-2">New Chat</p>
-    </div>
+    
     <!-- alphabetic list of contacts -->
   </div>
 </template>
