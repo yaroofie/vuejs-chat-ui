@@ -2,7 +2,7 @@
   <div class="flex items-center relative">
     <!-- typing status -->
     <div
-      class="absolute bottom-full mb-5 px-4 py-1 bg-stone-400 rounded-full"
+      class="absolute bottom-full px-4 py-1 bg-stone-400 rounded-full z-10"
       v-if="typing != ''"
     >
       <p class="text-sm">
@@ -11,7 +11,7 @@
     </div>
     <!-- reply -->
     <div
-      class="w-full absolute bottom-full p-4 bg-slate-200 rounded-md"
+      class="w-full absolute bottom-full mb-6 shadow-lg p-4 bg-stone-300 rounded-md"
       v-if="chat.new_message.reply"
     >
       <div class="flex justify-between">
@@ -50,6 +50,7 @@
           </div>
           <FormControl
             label=""
+            id="chat-input"
             placeholder="Message"
             class="w-full"
             input-class="px-20"
@@ -274,15 +275,6 @@ export default {
       let element = document.querySelector(".vue3-discord-emojipicker");
       if (!element) return;
       element.classList.remove("right-0");
-    },
-  },
-  watch: {
-    "chat.new_message.reply": {
-      handler(val) {
-        if (val) {
-          console.log("reply", val);
-        }
-      },
     },
   },
   mounted() {

@@ -1,10 +1,13 @@
 import { defineStore } from 'pinia';
 import Message from "@/class/Message.js";
+import Chat from "@/class/Chat.js";
+import User from "@/class/User.js";
 export const useChat = defineStore( {
-  id: 'chat',
+  id: 'chatStore',
   state: () => ( {
-    showEditor: false,
+    show_editor: false,
     show_info: false,
+    show_chats_menu: true,
     new_message: new Message(
       null,
       {
@@ -20,140 +23,79 @@ export const useChat = defineStore( {
       null,
       [],
     ),
-    subject: "Chat name",
-    description: "Some description for the chat",
-    participants: [
-      {
-        id: 1,
-        username: "Alireza",
-        about: "I am a programmer",
-      },
-      {
-        id: 2,
-        username: "Mohammad",
-        about: "I am a programmer",
-      },
-      {
-        id: 3,
-        username: "Mr. Robot",
-        about: "I am a chatbot",
-      },
-      {
-        id: 4,
-        username: "Mr. X",
-        about: "",
-      },
-    ],
-    messages: [
-      new Message(
+    new_chat: new Chat(
+      null,
+      "",
+      "",
+      "",
+      "",
+      [],
+      [],
+    ),
+    chats: [
+      new Chat(
         1,
-        null,
-        "info",
-        "seen",
-        "This group was created by the admin.",
-        "23/3/2022",
-        "9:00",
-        null
+        "group",
+        "Programmers",
+        "https://api.lorem.space/image/face?hash=cfsbilce",
+        "This is a programmer group chat",
+        [
+          {
+            id: 1,
+            username: "Alireza",
+            about: "I am a programmer",
+          },
+          {
+            id: 2,
+            username: "Mohammad",
+            about: "I am a programmer",
+          }
+        ]
       ),
-      new Message(
+      new Chat(
         2,
-        {
-          id: 1,
-          username: "user1",
-          avatar: "https://api.lorem.space/image/face?hash=cfsbilce",
-        },
-        "text",
-        "seen",
-        "Hello guys",
-        "23/3/2022",
-        "12:27",
-        null
+        "group",
+        "Traders",
+        "https://api.lorem.space/image/face?hash=cfs2il42",
+        "These are traders",
+        [
+          {
+            id: 1,
+            username: "Ali Sotude",
+            about: "I am a trader",
+          },
+          {
+            id: 3,
+            username: "Sadegh ghadamgahi",
+            about: "I am a trader aswell",
+          }
+        ]
       ),
-      new Message(
+    ],
+    contacts: [
+      new User(
+        1,
+        "Alireza",
+        "user1@server.com",
+        "https://api.lorem.space/image/face?hash=cfsbilce",
+        "I am a programmer",
+      ),
+      new User(
+        2,
+        "Mohammad",
+        "mohammad@server.com",
+        "https://api.lorem.space/image/face?hash=cfsbilce",
+        "I am a programmer",
+      ),
+      new User(
         3,
-        {
-          id: 2,
-          username: "user2",
-          avatar: "https://api.lorem.space/image/face?hash=cfsbilce",
-        },
-        "text",
-        "seen",
-        "Hello user1 how are you today ?",
-        "23/3/2022",
-        "15:40",
-        null
+        "Mr. Robot",
+        "Robot@server.com",
+        "https://api.lorem.space/image/face?hash=cfsbilce",
+        "I am a chatbot",
       ),
-      new Message(
-        4,
-        {
-          id: 1,
-          username: "user1",
-          avatar: "https://api.lorem.space/image/face?hash=cfsbilce",
-        },
-        "text",
-        "seen",
-        "I'm fine thank you and you ?",
-        "23/3/2022",
-        "20:50",
-        null
-      ),
-      new Message(
-        5,
-        {
-          id: 2,
-          username: "user2",
-          avatar: "https://api.lorem.space/image/face?hash=cfsbilce",
-        },
-        "text",
-        "seen",
-        "fantastic",
-        "23/3/2022",
-        "23:03",
-        null
-      ),
-      new Message(
-        6,
-        {
-          id: 4,
-          username: "user4",
-          avatar: "https://api.lorem.space/image/face?hash=cfsbilce",
-        },
-        "text",
-        "seen",
-        "Hello guys",
-        "24/3/2022",
-        "9:45",
-        null
-      ),
-      new Message(
-        7,
-        {
-          id: 4,
-          username: "user4",
-          avatar: "https://api.lorem.space/image/face?hash=cfsbilce",
-        },
-        "text",
-        "seen",
-        "Do any of you guys have any idea about the new project ?",
-        "24/3/2022",
-        "11:34",
-        null
-      ),
-      new Message(
-        8,
-        {
-          id: 5,
-          username: "me",
-          avatar: "https://api.lorem.space/image/face?hash=cfsbilce",
-        },
-        "text",
-        "seen",
-        "I'm not sure",
-        "24/3/2022",
-        "12:00",
-        7
-      ),
-    ]
+    ],
+    selected: null,
   } ),
   getters: {
 
@@ -176,7 +118,18 @@ export const useChat = defineStore( {
         null,
         [],
       );
-      this.showEditor = false;
+      this.new_chat = new Chat(
+        null,
+        "",
+        "",
+        "",
+        "",
+        [],
+        [],
+      );
+      this.show_editor = false;
+      this.show_info = false;
+      this.show_chats_menu = true;
     },
     send ()
     {
@@ -187,8 +140,8 @@ export const useChat = defineStore( {
         return;
       this.new_message.date = this.getFormatedDate();
       this.new_message.time = this.getFormatedTime();
-      this.new_message.id = this.messages.length + 1;
-      this.messages.push( this.new_message );
+      this.new_message.id = this.selected.messages.length + 1;
+      this.selected.messages.push( this.new_message );
       this.reset();
     },
     getFormatedDate ()
@@ -212,9 +165,30 @@ export const useChat = defineStore( {
     {
       if ( !message instanceof Message ) return;
       console.log( "removing the message" );
-      let index = this.messages.indexOf( message );
-      if(index < 0 ) return;
-      this.messages.splice( index, 1 );
-    }
+      let index = this.selected.messages.indexOf( message );
+      if ( index < 0 ) return;
+      this.selected.messages.splice( index, 1 );
+    },
+    reposition_dropdowns ()
+    {
+      let dropdowns = document.getElementsByClassName( `dropdown-content` );
+      if ( dropdowns.length == 0 ) return;
+      for ( let i = 0; i < dropdowns.length; i++ )
+      {
+        let dropdown = dropdowns[ i ];
+        let rect = dropdown.getBoundingClientRect();
+        let windowWidth = window.innerWidth;
+        let windowHeight = window.innerHeight;
+
+        if ( rect.x + rect.width > windowWidth )
+        {
+          dropdown.classList.add( "right-0" );
+        }
+        if ( rect.y + rect.height > windowHeight )
+        {
+          dropdown.classList.add( "bottom-0" );
+        }
+      }
+    },
   }
 } );

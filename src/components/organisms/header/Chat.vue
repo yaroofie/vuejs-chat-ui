@@ -3,28 +3,33 @@
     <!-- name , participants -->
     <div class="flex flex-col md:flex-row md:items-center p-2">
       <div class="avatar">
-        <div class="w-10 md:w-16 rounded-full">
-          <img src="https://api.lorem.space/image/face?hash=92310" />
+        <div class="w-10 md:w-12 rounded-full">
+          <img :src="chat.selected.image" />
         </div>
       </div>
       <div class="mx-2 hidden md:block">
         <!-- chat name -->
         <div class="text-lg font-bold">
-          {{ chat.subject }}
+          {{ chat.selected.subject }}
         </div>
         <!-- list of participants -->
         <div class="text-xs">
           <a
             :href="`users/${participant.id}`"
-            v-for="(participant, index) in chat.participants.filter(
+            v-for="(participant, index) in chat.selected.participants.filter(
               (p, i) => i < 3
             )"
             :key="index"
-            class="mr-2"
+            :id="`participant-${index}`"
           >
-            {{ participant.username }}
+            {{
+              chat.selected.participants.filter((p, i) => i < 3).length ==
+              index + 1
+                ? participant.username
+                : participant.username + " , "
+            }}
           </a>
-          <span v-if="chat.participants.length > 3">...</span>
+          <span v-if="chat.selected.participants.length > 3">...</span>
         </div>
       </div>
     </div>
@@ -57,7 +62,6 @@
             top-8
             w-52
           "
-          :class="menuPosition"
         >
           <li>
             <a @click.prevent="$emit('group_info')" :href="`#group_info`"
@@ -114,28 +118,7 @@ export default {
   data() {
     return {
       chat: useChat(),
-      menuPosition: "",
     };
-  },
-  mounted() {
-    window.addEventListener("resize", this.resize);
-    this.resize();
-  },
-  methods: {
-    resize(e) {
-      let menu = document.getElementById(`chat-info`);
-      if (!menu) return;
-      let rect = menu.getBoundingClientRect();
-      let windowWidth = window.innerWidth;
-      let windowHeight = window.innerHeight;
-
-      if (rect.x + rect.width > windowWidth) {
-        this.menuPosition += " right-0 ";
-      }
-      if (rect.y + rect.height > windowHeight) {
-        this.menuPosition += " bottom-0 ";
-      }
-    },
   },
 };
 </script>

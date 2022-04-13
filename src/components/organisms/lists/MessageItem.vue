@@ -2,7 +2,7 @@
   <div
     class="flex flex-wrap"
     :class="message.getPosition()"
-    :id="`#chat-message-${message.id}`"
+    :id="`chat-message-${message.id}`"
   >
     <!-- Date -->
     <div v-if="message.withDate" class="w-full text-center mb-4">
@@ -23,14 +23,10 @@
       <div class="flex justify-between">
         <!-- sender -->
         <div class="flex">
-          <div
-            class="w-1"
-            v-if="!message._isMe && !message._hideUser"
-            :class="'bg-' + message.color"
-          />
           <p
             v-text="message.sender.username"
             class="mx-2"
+            :style="`color:${message.color}`"
             v-if="!message._isMe && !message._hideUser"
           />
         </div>
@@ -61,42 +57,39 @@
               w-52
               mt-4
             "
-            :class="menuPosition"
           >
             <li>
-              <a @click.prevent="$emit('reply')" :href="`#reply-${message.id}`"
+              <a @click.prevent="emit('reply')" :href="`#reply-${message.id}`"
                 >Reply</a
               >
             </li>
             <li>
               <a
-                @click.prevent="$emit('reply_privately')"
+                @click.prevent="emit('reply_privately')"
                 :href="`#reply_privately-${message.id}`"
                 >Reply privately</a
               >
             </li>
             <li>
               <a
-                @click.prevent="$emit('forward')"
+                @click.prevent="emit('forward')"
                 :href="`#forward-${message.id}`"
                 >Forward message</a
               >
             </li>
             <li>
-              <a @click.prevent="$emit('star')" :href="`#star-${message.id}`"
+              <a @click.prevent="emit('star')" :href="`#star-${message.id}`"
                 >Star message</a
               >
             </li>
             <li>
-              <a
-                @click.prevent="$emit('remove')"
-                :href="`#remove-${message.id}`"
+              <a @click.prevent="emit('remove')" :href="`#remove-${message.id}`"
                 >Delete message</a
               >
             </li>
             <li>
               <a
-                @click.prevent="$emit('direct')"
+                @click.prevent="emit('direct')"
                 :href="`#direct-${message.id}`"
                 v-if="message.sender.username !== 'me'"
                 >Message {{ message.sender.username }}</a
@@ -106,19 +99,19 @@
         </div>
       </div>
       <!-- reply -->
-      <router-link
-        :to="`#chat-message-${message.reply}`"
+      <a
+        :href="`#chat-message-${message.reply}`"
         v-if="message._reply"
-        class="p-2 mt-0 rounded block bg-stone-400 overflow-hidden"
+        class="p-2 mt-0 rounded block bg-stone-300 overflow-hidden"
       >
         <p
           v-text="message._reply.sender.username"
-          :class="'text-' + message._reply.color"
+          :style="`color:${message._reply.color}`"
         />
         <p>
           {{ message._reply.message }}
         </p>
-      </router-link>
+      </a>
       <!-- attachments -->
       <div class="flex flex-wrap" v-if="message.attachments">
         <div
@@ -196,7 +189,6 @@ export default {
   },
   data() {
     return {
-      menuPosition: "",
       imageTypes: [
         "image/apng",
         "image/bmp",
@@ -212,27 +204,16 @@ export default {
       audioTypes: ["audio/mpeg", "audio/ogg", "audio/mp3"],
     };
   },
-  mounted() {
-    window.addEventListener("resize", this.resize);
-    this.resize();
-  },
   methods: {
-    resize(e) {
-      let menu = document.getElementById(`message-${this.message.id}`);
-      if (!menu) return;
-      let rect = menu.getBoundingClientRect();
-      let windowWidth = window.innerWidth;
-      let windowHeight = window.innerHeight;
-
-      if (rect.x + rect.width > windowWidth) {
-        this.menuPosition += " right-0 ";
+    emit(option) {
+      this.$emit(option);
+      let FormControl = document.getElementById(`chat-input`);
+      if (FormControl) {
+        let input = FormControl.querySelector(`input`);
+        if (input) {
+          input.focus();
+        }
       }
-      if (rect.y + rect.height > windowHeight) {
-        this.menuPosition += " bottom-0 ";
-      }
-    },
-    getFileSource(file) {
-      return URL.createObjectURL(file);
     },
   },
 };

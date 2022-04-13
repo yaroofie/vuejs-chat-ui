@@ -5,12 +5,16 @@
     </template>
 
     <template v-slot:header>
-      <ChatHeader @group_info="chat.show_info = true;" />
+      <ChatHeader @group_info="show_group_info()" />
+    </template>
+
+    <template v-slot:chats_menu>
+      <ChatsMenu />
     </template>
 
     <ul class="p-0">
       <MessageItem
-        v-for="(message, index) in chat.messages"
+        v-for="(message, index) in chat.selected.messages"
         :key="index"
         :message="message"
         @reply="reply(message)"
@@ -34,6 +38,7 @@ import MessageItem from "@/components/organisms/lists/MessageItem.vue";
 import ChatHeader from "@/components/organisms/header/Chat.vue";
 import ChatInput from "@/components/organisms/footer/ChatInput.vue";
 import ImageEditor from "@/components/organisms/cards/ImageEditor.vue";
+import ChatsMenu from "@/components/organisms/cards/ChatsMenu.vue";
 import ChatInfo from "@/components/organisms/cards/ChatInfo.vue";
 import { useChat } from "@/stores/chat";
 export default {
@@ -41,6 +46,7 @@ export default {
     Template,
     ChatInfo,
     ChatHeader,
+    ChatsMenu,
     MessageItem,
     ChatInput,
     ImageEditor,
@@ -48,7 +54,7 @@ export default {
   data() {
     return {
       chat: useChat(),
-      colors: ["red-300", "orange-300", "teal-300", "green-300", "sky-300"],
+      colors: ["#e71717", "#4a8bed", "#08d31b", "#ee4422", "#9492f1"],
       username: "me",
     };
   },
@@ -56,9 +62,11 @@ export default {
     this.addUiData();
   },
   watch: {
-    "chat.messages": {
+    "chat.selected": {
       handler(val) {
-        this.addUiData();
+        if (val) {
+          this.addUiData();
+        }
       },
       deep: true,
       immediate: true,
@@ -73,10 +81,11 @@ export default {
       this.chat.remove(message);
     },
     addUiData() {
-      this.chat.messages.forEach((message, index) => {
+      if(!this.chat.selected) return;
+      this.chat.selected.messages.forEach((message, index) => {
         // see if message should show date or not
         if (
-          !this.chat.messages.find(
+          !this.chat.selected.messages.find(
             (m, i) => m.date == message.date && m.withDate
           )
         )
@@ -84,7 +93,7 @@ export default {
         if (message.type !== "info") {
           // add sender's color
           if (message.color == "") {
-            let lastOne = this.chat.messages.find(
+            let lastOne = this.chat.selected.messages.find(
               (m, i) =>
                 m.sender &&
                 message.sender &&
@@ -106,8 +115,8 @@ export default {
           // don't show the sender if the last message is from the same sender
           if (
             index > 0 &&
-            this.chat.messages[index - 1].sender &&
-            this.chat.messages[index - 1].sender.id == message.sender.id
+            this.chat.selected.messages[index - 1].sender &&
+            this.chat.selected.messages[index - 1].sender.id == message.sender.id
           ) {
             message.hideUser();
           }
@@ -117,11 +126,12 @@ export default {
           // add reply message
           if (message.reply) {
             message.setReply(
-              this.chat.messages.find((m) => m.id == message.reply)
+              this.chat.selected.messages.find((m) => m.id == message.reply)
             );
           }
         }
       });
+      this.chat.reposition_dropdowns();
       setTimeout(() => {
         this.scrollToBottom("chat-container");
       }, 500);
@@ -130,6 +140,12 @@ export default {
       const element = document.getElementById(id);
       if (element) element.scrollTop = element.scrollHeight;
     },
+    show_group_info(){
+      this.chat.show_info = true;
+      setTimeout(() => {
+        this.chat.reposition_dropdowns()
+      }, 500);
+    }
   },
 };
 </script>
