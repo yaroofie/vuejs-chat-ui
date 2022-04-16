@@ -4,15 +4,24 @@
     <NewChat
       @cancel="show_form = ''"
       @new_group="show_form = 'new group'"
-      v-if="show_form == 'new chat'"
+      v-show="show_form == 'new chat'"
       style="z-index: 55"
     />
     <!-- new group -->
     <NewGroup
       @cancel="show_form = ''"
       @new_chat="show_form = 'new chat'"
-      v-if="show_form == 'new group'"
+      @next_step="stepTwo"
+      v-show="show_form == 'new group'"
       style="z-index: 55"
+    />
+    <!-- next step -->
+    <NewGroupStepTwo
+      @cancel="show_form = ''"
+      @create="create()"
+      v-show="show_form == 'new group step 2'"
+      style="z-index: 55"
+      :selected="selected"
     />
     <!-- chats header -->
     <ChatsHeader
@@ -22,7 +31,9 @@
     />
 
     <!-- search -->
-    <div class="flex flex-row justify-center items-center relative lg:px-4 mb-4">
+    <div
+      class="flex flex-row justify-center items-center relative lg:px-4 mb-4"
+    >
       <FormControl
         type="text"
         class="w-full"
@@ -44,7 +55,11 @@
         v-for="(chat, index) in chatStore.chats"
         :key="`chat-${index}`"
         :chat="chat"
-        :class="chatStore.selected && chatStore.selected.id == chat.id ? 'bg-stone-300' : ''"
+        :class="
+          chatStore.selected && chatStore.selected.id == chat.id
+            ? 'bg-stone-300'
+            : ''
+        "
       />
     </ul>
   </div>
@@ -54,6 +69,7 @@
 import ChatsHeader from "@/components/organisms/header/Chats.vue";
 import NewChat from "@/components/organisms/cards/NewChat.vue";
 import NewGroup from "@/components/organisms/cards/NewGroup.vue";
+import NewGroupStepTwo from "@/components/organisms/cards/NewGroupStepTwo.vue";
 import ChatItem from "@/components/organisms/lists/ChatItem.vue";
 import ButtonIcon from "@/components/atoms/ButtonIcon.vue";
 import FormControl from "@/components/molecules/input/FormControl.vue";
@@ -66,12 +82,23 @@ export default {
     NewChat,
     ChatItem,
     NewGroup,
+    NewGroupStepTwo,
   },
   data() {
     return {
       chatStore: useChat(),
       show_form: "",
+      selected: [],
     };
+  },
+  methods: {
+    stepTwo(selected) {
+      this.show_form = "new group step 2";
+      this.selected = selected;
+    },
+    create() {
+      console.log("creating ...");
+    },
   },
 };
 </script>

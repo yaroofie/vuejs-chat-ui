@@ -2,6 +2,7 @@
   <li class="border-b border-b-stone-400">
     <a
       class="flex items-center w-full lg:px-4 py-2 hover:bg-stone-300"
+      :class="selected ? 'bg-stone-400' : ''"
       :href="`#select-user-${u.id}`"
     >
       <div class="avatar">
@@ -26,6 +27,9 @@ export default {
       type: User,
       required: true,
     },
+    selected:{
+      type: Boolean,
+    }
   },
   data() {
     return {};

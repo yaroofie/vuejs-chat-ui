@@ -49,6 +49,7 @@
         v-for="contact in chat.contacts"
         :key="contact.id"
         :u="contact"
+        @click="create(contact)"
       />
     </ul>
   </div>
@@ -71,8 +72,19 @@ export default {
       chat: useChat(),
     };
   },
+  methods: {
+    create(contact) {
+      let payload = {
+        type : "direct",
+        subject: contact.username,
+        image: contact.avatar,
+        participants: [contact.id],
+      }
+      this.chat.create(payload).then(r => {
+        this.$emit('cancel')
+      });
+      
+    },
+  },
 };
 </script>
-
-<style>
-</style>

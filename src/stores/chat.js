@@ -37,38 +37,39 @@ export const useChat = defineStore( {
         1,
         "group",
         "Programmers",
-        "https://api.lorem.space/image/face?hash=cfsbilce",
+        "https://api.lorem.space/image/face?hash=cfs45lce",
         "This is a programmer group chat",
         [
-          {
-            id: 1,
-            username: "Alireza",
-            about: "I am a programmer",
-          },
-          {
-            id: 2,
-            username: "Mohammad",
-            about: "I am a programmer",
-          }
+          new User(
+            1,
+            "Alireza",
+            "user1@server.com",
+            "https://api.lorem.space/image/face?hash=cfsbiler",
+            "I am a programmer",
+          ),
+          new User(
+            2,
+            "Mohammad",
+            "mohammad@server.com",
+            "https://api.lorem.space/image/face?hash=cfsbdgce",
+            "I am a programmer",
+          ),
         ]
       ),
       new Chat(
         2,
-        "group",
-        "Traders",
-        "https://api.lorem.space/image/face?hash=cfs2il42",
-        "These are traders",
+        "direct",
+        "Mr. Robot",
+        "https://api.lorem.space/image/face?hash=cfsbilce",
+        "",
         [
-          {
-            id: 1,
-            username: "Ali Sotude",
-            about: "I am a trader",
-          },
-          {
-            id: 3,
-            username: "Sadegh ghadamgahi",
-            about: "I am a trader aswell",
-          }
+          new User(
+            3,
+            "Mr. Robot",
+            "Robot@server.com",
+            "https://api.lorem.space/image/face?hash=cfsbilce",
+            "I am a chatbot",
+          )
         ]
       ),
     ],
@@ -77,14 +78,14 @@ export const useChat = defineStore( {
         1,
         "Alireza",
         "user1@server.com",
-        "https://api.lorem.space/image/face?hash=cfsbilce",
+        "https://api.lorem.space/image/face?hash=cfsbiler",
         "I am a programmer",
       ),
       new User(
         2,
         "Mohammad",
         "mohammad@server.com",
-        "https://api.lorem.space/image/face?hash=cfsbilce",
+        "https://api.lorem.space/image/face?hash=cfsbdgce",
         "I am a programmer",
       ),
       new User(
@@ -130,6 +131,24 @@ export const useChat = defineStore( {
       this.show_editor = false;
       this.show_info = false;
       this.show_chats_menu = true;
+    },
+    create ( payload )
+    {
+      return new Promise( ( resolve, reject ) =>
+      {
+        this.chats.push( new Chat(
+          this.chats.length + 1,
+          payload.type,
+          payload.subject,
+          payload.image,
+          "",
+          this.contacts.filter( c => payload.participants.includes( c.id ) ),
+          []
+        ) );
+        this.selected = this.chats[ this.chats.length - 1 ];
+        this.reset();
+        resolve();
+      } );
     },
     send ()
     {

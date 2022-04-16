@@ -3,10 +3,15 @@
     <!-- user avatar , new chat and options -->
     <div class="flex justify-between items-center">
       <!-- user avatar -->
-      <div class="avatar p-2">
-        <div class="w-10 md:w-12 rounded-full">
-          <img src="https://api.lorem.space/image/face?hash=92310" />
+      <div class="flex items-center">
+        <div class="avatar p-2">
+          <div class="w-10 md:w-12 rounded-full">
+            <img src="https://api.lorem.space/image/face?hash=92310" />
+          </div>
         </div>
+        <span class="">
+          {{ user.username }}
+        </span>
       </div>
       <!-- options -->
       <div class="">
@@ -77,6 +82,7 @@
 <script>
 import ButtonIcon from "@/components/atoms/ButtonIcon.vue";
 import { useChat } from "@/stores/chat";
+import { useUser } from "@/stores/user";
 export default {
   name: "ChatHeader",
   components: {
@@ -85,6 +91,7 @@ export default {
   data() {
     return {
       chat: useChat(),
+      user: useUser(),
     };
   },
 };

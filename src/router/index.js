@@ -6,9 +6,35 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import(/* webpackChunkName: "home" */ '@/components/pages/Home.vue'),
+      component: () => import(/* webpackChunkName: "home" */ '@/components/pages/Home.vue' ),
+      meta: {
+        middlewares: [
+          'auth',
+        ]
+      }
+    },
+    {
+      path: '/username',
+      name: 'username',
+      component: () => import(/* webpackChunkName: "home" */ '@/components/pages/Username.vue' ),
+      meta: {
+        middlewares: [
+          'guest',
+        ]
+      }
     },
   ]
 })
-
+router.beforeEach( ( to, from, next ) =>
+{
+  if ( to.meta.middlewares )
+  {
+    to.meta.middlewares.forEach( m =>
+    {
+      const imp = () => import( `./middlewares/${ m }.js` );
+      imp().then( mw => mw.default( to, from, next ) );
+    } );
+  }
+  else next();
+} );
 export default router

@@ -7,15 +7,15 @@
           <img :src="chat.selected.image" />
         </div>
       </div>
-      <div class="mx-2 hidden md:block">
+      <div class="mx-2 hidden md:block cursor-pointer" @click="$emit('group_info')">
         <!-- chat name -->
         <div class="text-lg font-bold">
           {{ chat.selected.subject }}
         </div>
         <!-- list of participants -->
-        <div class="text-xs">
+        <div class="text-xs" v-if="chat.selected.type == 'group'">
           <a
-            :href="`users/${participant.id}`"
+            :href="`#user-${participant.id}`"
             v-for="(participant, index) in chat.selected.participants.filter(
               (p, i) => i < 3
             )"
@@ -30,6 +30,12 @@
             }}
           </a>
           <span v-if="chat.selected.participants.length > 3">...</span>
+        </div>
+        <!-- last seen -->
+        <div class="text-xs" v-else-if="chat.selected.type == 'direct'">
+          <span>
+            last seen today at 3:45 AM
+          </span>
         </div>
       </div>
     </div>
