@@ -110,7 +110,7 @@ export default {
       let payload = {
         type : "group",
         subject: this.subject,
-        image: this.url,
+        image: this.url ? this.url : this.placeholder,
         participants: this.selected,
       }
       this.chat.create(payload).then(r => {
